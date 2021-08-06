@@ -22,21 +22,6 @@ public class Usuario {
     @NotNull
     private LocalDateTime horaCadastro;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getLogin() {
-        return login;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public LocalDateTime getHoraCadastro() {
-        return horaCadastro;
-    }
 
     @Deprecated
     public Usuario(){}

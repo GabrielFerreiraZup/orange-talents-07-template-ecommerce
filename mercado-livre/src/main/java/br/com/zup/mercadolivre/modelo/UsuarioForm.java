@@ -1,5 +1,7 @@
 package br.com.zup.mercadolivre.modelo;
 
+import br.com.zup.mercadolivre.validation.UniqueGeneric;
+
 import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 
@@ -7,6 +9,7 @@ public class UsuarioForm {
 
     @NotBlank
     @Email
+    @UniqueGeneric(domainClass = Usuario.class , fieldName = "login",message = "Esse login já existe, inserir login único")
     private String login;
 
     @NotBlank
