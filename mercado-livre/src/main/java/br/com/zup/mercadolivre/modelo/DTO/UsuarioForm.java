@@ -1,5 +1,6 @@
-package br.com.zup.mercadolivre.modelo;
+package br.com.zup.mercadolivre.modelo.DTO;
 
+import br.com.zup.mercadolivre.modelo.Usuario;
 import br.com.zup.mercadolivre.validation.UniqueGeneric;
 
 import javax.validation.constraints.*;

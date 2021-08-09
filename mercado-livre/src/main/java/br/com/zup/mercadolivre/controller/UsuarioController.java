@@ -2,7 +2,7 @@ package br.com.zup.mercadolivre.controller;
 
 
 import br.com.zup.mercadolivre.modelo.Usuario;
-import br.com.zup.mercadolivre.modelo.UsuarioForm;
+import br.com.zup.mercadolivre.modelo.DTO.UsuarioForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
