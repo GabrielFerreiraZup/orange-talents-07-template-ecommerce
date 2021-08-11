@@ -21,7 +21,11 @@ public class Produto {
     @NotNull
     @Positive
     private Integer quantidade;
-    @ManyToMany(mappedBy = "produtosCategoria")
+    @ManyToMany
+    @JoinTable(
+            name = "produto_caracteristica",
+            joinColumns = @JoinColumn(name = "produto_id"),
+            inverseJoinColumns = @JoinColumn(name = "caracteristica_id"))
     private List<Caracteristica> caracteristicas;
     @NotNull
     private String descricao;

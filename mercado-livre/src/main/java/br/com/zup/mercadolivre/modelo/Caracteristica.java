@@ -16,7 +16,7 @@ public class Caracteristica {
     @NotNull
     private String descricao;
     @ManyToMany
-    private List<Produto> produtosCategoria;
+    private List<Produto> produtosCaracteristica;
 
     public Long getId() {
         return id;
