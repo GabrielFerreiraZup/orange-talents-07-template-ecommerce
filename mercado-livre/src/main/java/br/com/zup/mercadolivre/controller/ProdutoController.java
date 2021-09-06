@@ -2,14 +2,14 @@ package br.com.zup.mercadolivre.controller;
 
 
 import br.com.zup.mercadolivre.config.security.service.TokenService;
-import br.com.zup.mercadolivre.modelo.Caracteristica;
-import br.com.zup.mercadolivre.modelo.Categoria;
+import br.com.zup.mercadolivre.modelo.*;
 import br.com.zup.mercadolivre.modelo.DTO.NovasImagensRequest;
+import br.com.zup.mercadolivre.modelo.DTO.PerguntaForm;
 import br.com.zup.mercadolivre.modelo.DTO.ProdutoForm;
-import br.com.zup.mercadolivre.modelo.Produto;
-import br.com.zup.mercadolivre.modelo.Usuario;
+import br.com.zup.mercadolivre.repository.PerguntaRepository;
 import br.com.zup.mercadolivre.repository.ProdutoRepository;
 import br.com.zup.mercadolivre.repository.UsuarioRepository;
+import br.com.zup.mercadolivre.utils.EmailSender;
 import br.com.zup.mercadolivre.utils.FakeUploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +39,17 @@ public class ProdutoController {
     private UsuarioRepository usuarioRepository;
 
     @Autowired
+    private PerguntaRepository perguntaRepository;
+
+    @Autowired
     private TokenService tokenService;
+
+    @Autowired
+    private EmailSender emailSender;
 
     @PostMapping
     @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid ProdutoForm produtoForm){
+    public ResponseEntity cadastrar(@RequestBody @Valid ProdutoForm produtoForm,HttpServletRequest request){
         Categoria categoriaProduto = em.find(Categoria.class, produtoForm.getIdCategoria());
         if (categoriaProduto == null) return ResponseEntity.badRequest().build();
         List<Caracteristica> caracteristicas = new ArrayList<>();
@@ -52,7 +58,11 @@ public class ProdutoController {
             if (novaCaracteristica == null) return ResponseEntity.badRequest().build();
             caracteristicas.add(novaCaracteristica);
         }
-        Usuario userProduto = usuarioRepository.findByLogin("testeUsuario@email.com").get();
+        String token = request.getHeader("Authorization");
+        token = token.substring(7,token.length());
+
+        Long idUsuario = tokenService.getIdToken(token);
+        Usuario userProduto = usuarioRepository.findById(idUsuario).get();
         Produto novoProduto = new Produto(produtoForm.getNome(),produtoForm.getValor(),produtoForm.getQuantidade(),
                                             caracteristicas,produtoForm.getDescricao(),categoriaProduto,userProduto);
         produtoRepository.save(novoProduto);
@@ -86,4 +96,23 @@ public class ProdutoController {
 
     }
 
+    @PostMapping(value = "/{id}/pergunta")
+    public ResponseEntity perguntar(@PathVariable Long id, @RequestBody @Valid PerguntaForm perguntaForm,HttpServletRequest request){
+        Optional<Produto> produtoPerguntado = produtoRepository.findById(id);
+        if(produtoPerguntado.isEmpty()) ResponseEntity.notFound().build();
+        String token = request.getHeader("Authorization");
+        token = token.substring(7,token.length());
+        Long idUsuario = tokenService.getIdToken(token);
+        Optional<Usuario> usuarioPerguntado =usuarioRepository.findById(idUsuario);
+
+        Pergunta novaPergunta = perguntaForm.convert(produtoPerguntado.get(),usuarioPerguntado.get());
+        perguntaRepository.save(novaPergunta);
+        String destinatario = produtoPerguntado.get().getUsuario().getLogin();
+        System.out.println(destinatario);
+        String assunto = "Nova Pergunta!";
+        String corpo = "Pergunta do usuário " + usuarioPerguntado.get().getLogin() + " de título: "+ perguntaForm.getTitulo() + " foi criada agora !!";
+        emailSender.sendEmail(destinatario,corpo,assunto);
+        System.out.println("Enviando email agora !!!!Implementado");
+        return ResponseEntity.ok().build();
+    }
 }
