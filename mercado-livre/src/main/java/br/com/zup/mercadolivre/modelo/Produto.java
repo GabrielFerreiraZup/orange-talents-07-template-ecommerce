@@ -5,6 +5,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -33,6 +34,12 @@ public class Produto {
     private Categoria categoria;
     @NotNull
     private LocalDateTime horaCadastro;
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
+    private List<ImagemProduto> imagens = new ArrayList<>();
+    @ManyToOne
+    private Usuario usuario;
+
+
 
     public Long getId() {
         return id;
@@ -66,18 +73,54 @@ public class Produto {
         return horaCadastro;
     }
 
+
+    public List<ImagemProduto> getImagens() {
+        return imagens;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void linkImages(List<String> links){
+        List<ImagemProduto> listaImagemProduto = new ArrayList<>();
+        for (String link:links) {
+            ImagemProduto novaImagemProduto = new ImagemProduto(this,link);
+            listaImagemProduto.add(novaImagemProduto);
+        }
+        this.imagens.addAll(listaImagemProduto);
+    }
+
+
     @Deprecated
     public Produto() {
     }
 
-    public Produto(String nome, Double valor, Integer quantidade,
-                   List<Caracteristica> caracteristicas, String descricao, Categoria categoria) {
+    public Produto(String nome, Double valor, Integer quantidade, List<Caracteristica> caracteristicas, String descricao, Categoria categoria, Usuario usuario) {
         this.nome = nome;
         this.valor = valor;
         this.quantidade = quantidade;
         this.caracteristicas = caracteristicas;
         this.descricao = descricao;
         this.categoria = categoria;
+        this.horaCadastro = horaCadastro;
         this.horaCadastro = LocalDateTime.now();
+        this.usuario = usuario;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Produto{" +
+                "id=" + id +
+                ", nome='" + nome + '\'' +
+                ", valor=" + valor +
+                ", quantidade=" + quantidade +
+                ", caracteristicas=" + caracteristicas +
+                ", descricao='" + descricao + '\'' +
+                ", categoria=" + categoria +
+                ", horaCadastro=" + horaCadastro +
+                ", imagens=" + imagens +
+                '}';
     }
 }
