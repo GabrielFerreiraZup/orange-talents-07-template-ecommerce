@@ -23,6 +23,14 @@ public class Pergunta {
     public Pergunta() {
     }
 
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public LocalDateTime getHoraPergunta() {
+        return horaPergunta;
+    }
+
     public Pergunta(String titulo, Produto produto, Usuario usuario) {
         this.titulo = titulo;
         this.horaPergunta = LocalDateTime.now();

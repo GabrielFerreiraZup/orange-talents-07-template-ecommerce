@@ -34,10 +34,15 @@ public class Produto {
     private Categoria categoria;
     @NotNull
     private LocalDateTime horaCadastro;
+    @OneToMany(mappedBy = "produto",cascade = CascadeType.MERGE)
+    private List<Opniao> opnioes;
+
     @OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
     private List<ImagemProduto> imagens = new ArrayList<>();
     @ManyToOne
     private Usuario usuario;
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.MERGE)
+    private List<Pergunta> perguntas = new ArrayList<>();
 
 
 
@@ -74,12 +79,34 @@ public class Produto {
     }
 
 
+
+
     public List<ImagemProduto> getImagens() {
         return imagens;
     }
 
     public Usuario getUsuario() {
         return usuario;
+    }
+
+    public List<Opniao> getOpnioes() {
+        return opnioes;
+    }
+
+    public List<Pergunta> getPerguntas() {
+        return perguntas;
+    }
+
+    public void setPerguntas(List<Pergunta> perguntas) {
+        this.perguntas = perguntas;
+    }
+
+    public void setOpnioes(List<Opniao> opnioes) {
+        this.opnioes = opnioes;
+    }
+
+    public void setImagens(List<ImagemProduto> imagens) {
+        this.imagens = imagens;
     }
 
     public void linkImages(List<String> links){
@@ -103,7 +130,7 @@ public class Produto {
         this.caracteristicas = caracteristicas;
         this.descricao = descricao;
         this.categoria = categoria;
-        this.horaCadastro = horaCadastro;
+
         this.horaCadastro = LocalDateTime.now();
         this.usuario = usuario;
     }

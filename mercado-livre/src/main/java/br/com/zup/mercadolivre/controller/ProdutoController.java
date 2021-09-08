@@ -6,6 +6,7 @@ import br.com.zup.mercadolivre.modelo.*;
 import br.com.zup.mercadolivre.modelo.DTO.NovasImagensRequest;
 import br.com.zup.mercadolivre.modelo.DTO.PerguntaForm;
 import br.com.zup.mercadolivre.modelo.DTO.ProdutoForm;
+import br.com.zup.mercadolivre.modelo.DTOdetalhes.DetalhesProdutoDto;
 import br.com.zup.mercadolivre.repository.PerguntaRepository;
 import br.com.zup.mercadolivre.repository.ProdutoRepository;
 import br.com.zup.mercadolivre.repository.UsuarioRepository;
@@ -114,5 +115,14 @@ public class ProdutoController {
         emailSender.sendEmail(destinatario,corpo,assunto);
         System.out.println("Enviando email agora !!!!Implementado");
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<DetalhesProdutoDto> detalhesProduto(@PathVariable Long id){
+        Optional<Produto> produtoOpt = produtoRepository.findById(id);
+        if(produtoOpt.isEmpty()) return ResponseEntity.notFound().build();
+        DetalhesProdutoDto detalhesProdutoDto = new DetalhesProdutoDto(produtoOpt.get());
+        return ResponseEntity.ok(detalhesProdutoDto);
+
     }
 }
